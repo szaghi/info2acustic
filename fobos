@@ -1,0 +1,58 @@
+[modes]
+modes = gnu gnu-debug
+
+[common-variables]
+$CSHARED_GNU = -cpp -c -fPIC -frealloc-lhs
+$CSHARED_INT = -cpp -c -fpic -assume realloc_lhs
+$LSHARED     = -shared
+$CSTATIC_GNU = -cpp -c -frealloc-lhs
+$CSTATIC_INT = -cpp -c -assume realloc_lhs
+$DEBUG_GNU   = -O0 -g3 -Warray-bounds -Wcharacter-truncation -Wline-truncation -Wimplicit-interface -Wimplicit-procedure -Wunderflow -fcheck=all -fmodule-private -ffree-line-length-132 -fimplicit-none -fbacktrace -fdump-core -finit-real=nan -std=f2008 -fall-intrinsics
+$DEBUG_INT   = -O0 -debug all -check all -warn all -extend-source 132 -traceback -gen-interfaces#-fpe-all=0 -fp-stack-check -fstack-protector-all -ftrapuv -no-ftz -std08
+$OPTIMIZE    = -O2
+
+# main modes
+# GNU
+[gnu]
+template  = template-gnu
+target    = info2acustic.F90
+
+[gnu-debug]
+template  = template-gnu-debug
+target    = info2acustic.F90
+
+#templates
+[template-gnu]
+compiler  = gnu
+cflags    = $CSHARED_GNU $OPTIMIZE
+lflags    = $LSHARED $OPTIMIZE
+build_dir = ./exe/
+mod_dir   = ./mod/
+obj_dir   = ./obj/
+src       = ./src/
+colors    = True
+quiet     = False
+log       = True
+jobs      = 2
+
+[template-gnu-debug]
+compiler  = gnu
+cflags    = $CSTATIC_GNU $DEBUG_GNU
+lflags    = $DEBUG_GNU
+build_dir = ./exe/
+mod_dir   = ./mod/
+obj_dir   = ./obj/
+src       = ./src/
+colors    = True
+quiet     = False
+log       = True
+jobs      = 2
+
+# rules
+[rule-delexe]
+help = Delete exes
+rule = rm -rf exe/
+
+[rule-clean]
+help = Clean the project tree
+rule_1 = FoBiS.py rule -ex delexe
